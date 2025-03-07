@@ -4,16 +4,19 @@
 ## define function for calls below
 function reset_group_and_permissions () { 
   ## reset group and permissions
-  path_array=( "$LOG_DIR_PATH" "$PROJECT_DIR_PATH" "$ENV_PATH" )
+  declare -A path_array
+  path_array["LOG_DIR_PATH"]="$LOG_DIR_PATH"
+  path_array["PROJECT_DIR_PATH"]="$PROJECT_DIR_PATH"
+  path_array["ENV_PATH"]="$ENV_PATH"
 
-  for p in "${path_array[@]}"
-  do
+  for key in "${!path_array[@]}"; do
+    p=${path_array[${key}]}
     if [[ -n $p ]]; then
-      echo "processing directory: " "$p"
+      echo "processing directory:" "$p"
       sudo /bin/chgrp -R $GROUP "$p"  # recursively ensures all items are set to proper group -- solves problem of an item being root/root if sudo-updated after a forced deletion
       sudo /bin/chmod -R g=rwX "$p"
     else
-      echo "Exiting - path not set: " "$p"
+      echo "Exiting - path not set:" "$key"
       exit
     fi
 
