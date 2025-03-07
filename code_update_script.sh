@@ -24,16 +24,74 @@ function reset_group_and_permissions () {
   echo "---"; echo " "
 }
 
-## look for "--permissions_only" argument 
-if [[ $1 =~ -permissions_only|--permissions_only ]]; then
-  ## reset group and permissions
-  reset_group_and_permissions
-  echo "Remember, this only sets group and permissions."; echo
-  exit
-elif [[ $# -ge 1 ]]; then
-  echo "Exiting -- only permissible argument: --permissions_only"; echo
-  exit
-fi
+## function to make a new venv and pip install the requirements file specified
+function pip_deploy () {
+  ## start in repo, because we need to get the commit hash
+  cd "$PROJECT_DIR_PATH"
+  ## construct venv name
+  proj_name=${PROJECT_DIR_PATH%/} # grabs last string after slashes
+  proj_name=${proj_name##*/}
+  new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_pip-deploy_$(git rev-parse --short HEAD)"
+
+  cd ..
+  ## make sure ./$new_venv_name doesn't already exist
+  rm -rf $new_venv_name
+  ## make new venv
+  source $ENV_PATH/bin/activate
+  echo "Making new venv $new_venv_name with pip using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
+  python -m venv $new_venv_name
+  deactivate
+
+  ## install requirements
+  source $new_venv_name/bin/activate
+  if [[ $(which pip) != $(pwd)/$new_venv_name/bin/pip ]]; then
+    echo "using wrong pip ($(which pip))... exiting"
+    exit 1
+  fi
+  pip install --ignore-installed --upgrade pip
+  # TODO: think about how to pass correct requirements file
+  pip install --ignore-installed  -r $1
+
+  echo;echo "running pip freeze:"
+  pip freeze;echo
+
+  ## relink env
+  rm env
+  ln -s $new_venv_name env
+}
+
+function uv_deploy () {
+  cd "$PROJECT_DIR_PATH"
+  ## construct venv name
+  proj_name=${PROJECT_DIR_PATH%/} # grabs last string after slashes
+  proj_name=${proj_name##*/}
+  new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_uv-deploy_$(git rev-parse --short HEAD)"
+
+  cd ..
+  ## make new venv
+  source $ENV_PATH/bin/activate
+  echo "Making new venv $new_venv_name with uv using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
+  python_to_use=$(which python)
+  uv venv $new_venv_name --python $python_to_use --native-tls --python-preference only-system --seed --relocatable
+  deactivate
+
+  ## install requirements
+  source $new_venv_name/bin/activate
+  if [[ $(which pip) != $(pwd)/$new_venv_name/bin/pip ]]; then
+    echo "using wrong pip ($(which pip))... exiting"
+    exit 1
+  fi
+  uv pip install --upgrade pip
+  # TODO: think about how to pass correct requirements file
+  uv pip install -r $1
+
+  echo;echo "running pip freeze:"
+  pip freeze
+
+  ## relink env
+  rm env
+  ln -s $new_venv_name env
+}
 
 ## reset group and permissions
 echo "updating group and permissions before code-update..."; echo " "
