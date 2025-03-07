@@ -159,14 +159,30 @@ while [[ $# -gt 0 ]]; do
 done
 
 ## reset group and permissions
-echo "updating group and permissions before code-update..."; echo " "
+echo "updating group and permissions..."; echo " "
 reset_group_and_permissions
+
+if [[ $PERMISSIONS_ONLY = true ]]; then
+  echo "Exiting early because --permissions only was set"; echo
+  exit
+fi
+
+echo "moving on to code update...."
 
 ## update app
 echo "running git pull..."; echo " "
 cd $PROJECT_DIR_PATH
 git pull
 echo "---"; echo " "
+
+## make new venv
+if [[ $DO_PIP_DEPLOY = true ]]; then
+  echo "doing pip deploy..."
+  pip_deploy $PIP_DEPLOY_REQS
+elif [[ $DO_UV_DEPLOY = true ]]; then
+  echo "doing uv deploy..."
+  uv_deploy $UV_DEPLOY_REQS
+fi
 
 ## run collectstatic if necessary (the `-n` test is for non-empty)
 if [[ -n $PYTHON_PATH ]]; then
