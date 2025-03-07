@@ -35,22 +35,22 @@ function pip_deploy () {
 
   cd ..
   ## make sure ./$new_venv_name doesn't already exist
-  rm -rf $new_venv_name
+  rm -rf $new_venv_name || exit 1
   ## make new venv
-  source ${ENV_PATH%/}/bin/activate
+  source ${ENV_PATH%/}/bin/activate || exit 1
   echo "Making new venv $new_venv_name with pip using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
-  python -m venv $new_venv_name
+  python -m venv $new_venv_name || exit 1
   deactivate
 
   ## install requirements
-  source $new_venv_name/bin/activate
+  source $new_venv_name/bin/activate || exit 1
   if [[ $(which pip) != $(pwd)/$new_venv_name/bin/pip ]]; then
     echo "using wrong pip ($(which pip))... exiting"
     exit 1
   fi
-  pip install --ignore-installed --upgrade pip
+  pip install --ignore-installed --upgrade pip || exit 1
   # TODO: think about how to pass correct requirements file
-  pip install --ignore-installed  -r $1
+  pip install --ignore-installed  -r $1 || exit 1
 
   echo;echo "running pip freeze:"
   pip freeze;echo
@@ -68,25 +68,27 @@ function uv_deploy () {
   new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_uv-deploy_$(git rev-parse --short HEAD)"
 
   cd ..
+  ## make sure ./$new_venv_name doesn't already exist
+  rm -rf $new_venv_name || exit 1
   ## make new venv
   source ${ENV_PATH%/}/bin/activate || exit 1
   echo "Making new venv $new_venv_name with uv using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
   python_to_use=$(which python)
-  uv venv $new_venv_name --python $python_to_use --native-tls --python-preference only-system --seed --relocatable
+  uv venv $new_venv_name --python $python_to_use --native-tls --python-preference only-system --seed --relocatable || exit 1
   deactivate
 
   ## install requirements
-  source $new_venv_name/bin/activate
+  source $new_venv_name/bin/activate || exit 1
   if [[ $(which pip) != $(pwd)/$new_venv_name/bin/pip ]]; then
     echo "using wrong pip ($(which pip))... exiting"
     exit 1
   fi
-  uv pip install --upgrade pip
+  uv pip install --upgrade pip || exit 1
   # TODO: think about how to pass correct requirements file
-  uv pip install -r $1
+  uv pip install -r $1 || exit 1
 
   echo;echo "running pip freeze:"
-  pip freeze
+  pip freeze; echo
 
   ## relink env
   rm env
