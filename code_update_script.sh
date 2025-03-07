@@ -63,13 +63,13 @@ function pip_deploy () {
 function uv_deploy () {
   cd "$PROJECT_DIR_PATH"
   ## construct venv name
-  proj_name=${PROJECT_DIR_PATH%/} # grabs last string after slashes
-  proj_name=${proj_name##*/}
+  proj_name=${PROJECT_DIR_PATH%/} # removes trailing slash
+  proj_name=${proj_name##*/} # grabs last string after slashes
   new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_uv-deploy_$(git rev-parse --short HEAD)"
 
   cd ..
   ## make new venv
-  source $ENV_PATH/bin/activate
+  source ${ENV_PATH%/}/bin/activate || exit 1
   echo "Making new venv $new_venv_name with uv using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
   python_to_use=$(which python)
   uv venv $new_venv_name --python $python_to_use --native-tls --python-preference only-system --seed --relocatable
