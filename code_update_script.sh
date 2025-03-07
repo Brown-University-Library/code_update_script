@@ -93,6 +93,71 @@ function uv_deploy () {
   ln -s $new_venv_name env
 }
 
+## parse arguments, exit early if incorrect
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -permissions_only|--permissions_only)
+      PERMISSIONS_ONLY=true
+      shift
+      if [[ $# -gt 0 ]]; then
+        ## if extra args, exit early, do not reset group and permissions
+        echo "Not updated. Can't use --permissions_only with other args"; echo
+        exit 1
+      fi
+      ;;
+    -pip_deploy|--pip_deploy)
+      if [[ $2 == \-* ]]; then
+        echo "Not updated. --pip-deploy needs a requirements-file argument"; echo
+        exit 1
+      fi
+      PIP_DEPLOY_REQS="$2"
+      DO_PIP_DEPLOY=true
+      shift; shift # twice because this flag takes requirements as sub-arg
+      if [[ $# -gt 0 ]]; then
+        ## if extra args, exit early, do not make new venv
+        echo "Not updated. Can't use --pip-deploy with other args"; echo
+        exit 1
+      fi
+      ;;
+    -uv_deploy|--uv_deploy)
+      if [[ $2 == \-* ]]; then
+        echo "Not updated. --uv-deploy needs a requirements-file argument"; echo
+        exit 1
+      fi
+      UV_DEPLOY_REQS="$2"
+      DO_UV_DEPLOY=true
+      shift; shift # twice because this flag takes requirements as sub-arg
+      if [[ $# -gt 0 ]]; then
+        ## if extra args, exit early, do not make new venv
+        echo "Not updated. Can't use --uv-deploy with other args"; echo
+        exit 1
+      fi
+      ;;
+    -h|--help)
+      HELP_DESC="$0 does chmod, chgrp, git pull, and optionally collectstatic \
+      and touch restart, based on envars"
+      echo $HELP_DESC
+      echo "Usage: $0 [flags]"
+      HELP_FLAGS="\
+        -(-)permissions_only=stop script after updating permissions and groups
+        -(-)pip_deploy [requirements]=additionally make venv, install \
+        requirements specified in [requirements], and symlink
+        -h/--help=show this help and exit"
+      column -ts "=" -W 2 <<< ${HELP_FLAGS//        /}
+      exit
+      ;;
+    -*|--*)
+      echo "unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
 ## reset group and permissions
 echo "updating group and permissions before code-update..."; echo " "
 reset_group_and_permissions
