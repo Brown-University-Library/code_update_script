@@ -29,15 +29,15 @@ function pip_deploy () {
   ## start in repo, because we need to get the commit hash
   cd "$PROJECT_DIR_PATH"
   ## construct venv name
-  proj_name=${PROJECT_DIR_PATH%/} # grabs last string after slashes
-  proj_name=${proj_name##*/}
+  proj_name=${PROJECT_DIR_PATH%/} # removes trailing slash
+  proj_name=${proj_name##*/} # grabs last string after slashes
   new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_pip-deploy_$(git rev-parse --short HEAD)"
 
   cd ..
   ## make sure ./$new_venv_name doesn't already exist
   rm -rf $new_venv_name
   ## make new venv
-  source $ENV_PATH/bin/activate
+  source ${ENV_PATH%/}/bin/activate
   echo "Making new venv $new_venv_name with pip using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
   python -m venv $new_venv_name
   deactivate
