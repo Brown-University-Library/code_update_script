@@ -35,7 +35,9 @@ function pip_deploy () {
 
   cd ..
   ## make sure ./$new_venv_name doesn't already exist
-  rm -rf $new_venv_name
+  if [[ -d $new_venv_name ]]; then
+    rm -rf $new_venv_name
+  fi
   ## make new venv
   source $ENV_PATH/bin/activate
   echo "Making new venv $new_venv_name with pip using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
@@ -68,6 +70,10 @@ function uv_deploy () {
   new_venv_name="venv_${proj_name}_$(date +%Y-%m-%d)_uv-deploy_$(git rev-parse --short HEAD)"
 
   cd ..
+  ## make sure ./$new_venv_name doesn't already exist
+  if [[ -d $new_venv_name ]]; then
+    rm -rf $new_venv_name
+  fi
   ## make new venv
   source $ENV_PATH/bin/activate
   echo "Making new venv $new_venv_name with uv using $(python --version) from previous venv: $(readlink -f $ENV_PATH)"
