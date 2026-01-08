@@ -58,6 +58,7 @@ if [[ -n $TOUCH_PATH ]]; then
     echo ":: touching the restart file..."; echo " "
     touch $TOUCH_PATH
     sleep 1
+    echo "ok"
     echo "---"; echo " "; echo " "
 fi
 
