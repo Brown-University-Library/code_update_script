@@ -86,8 +86,6 @@ if [[ -n $URLS_TO_CHECK ]]; then
             echo "curl-check: FAILED - received HTTP $HTTP_CODE (expected 200)"
         fi
     done
-else
-    echo "no urls to curl..."
 fi
     
 echo "---"; echo " "; echo " "
