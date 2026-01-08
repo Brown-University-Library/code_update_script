@@ -87,9 +87,8 @@ if [[ -n $URLS_TO_CHECK ]]; then
             echo "curl-check: FAILED - received HTTP $HTTP_CODE (expected 200)"
         fi
     done
+    echo "---"; echo " "; echo " "
 fi
-    
-echo "---"; echo " "; echo " "
 
 ## that's it! -----------------------------------
 echo "DEPLOY-COMPLETE"; echo " "; echo "--------------------"; echo " "
