@@ -28,13 +28,13 @@ function reset_group_and_permissions () {
 ## reset INITIAL group and permissions ----------
 echo ":: running INITIAL group and permissions update..."; echo " "
 reset_group_and_permissions
-echo "---"; echo " "
+echo "---"; echo " "; echo " "
 
 ## update app -----------------------------------
 echo ":: running git pull..."; echo " "
 cd $PROJECT_DIR_PATH
 git pull
-echo "---"; echo " "
+echo "---"; echo " "; echo " "
 
 ## update any python packages -------------------
 echo "running uv sync..."; echo " "
@@ -45,20 +45,20 @@ echo "---"; echo " "; echo " "
 if [[ -n $STATIC_WEB_DIR_PATH ]]; then
     echo "running collectstatic..."
     uv run ./manage.py collectstatic --noinput
-    echo "---"; echo " "
+    echo "---"; echo " "; echo " "
 fi
 
 ## reset FINAL group and permissions -----------
 echo "running final ownership and permissions update..."; echo " "
 reset_group_and_permissions
-echo "---"; echo " "
+echo "---"; echo " "; echo " "
 
 ## make it real
 if [[ -n $TOUCH_PATH ]]; then   
     echo "touching the restart file..."
     touch $TOUCH_PATH
     sleep 1
-    echo "---"; echo " "
+    echo "---"; echo " "; echo " "
 fi
 
 ## run tests ------------------------------------
@@ -71,7 +71,7 @@ else
     echo "Please check the test output above for details"
     echo "Continuing with deployment despite test failure..."
 fi
-echo "---"; echo " "
+echo "---"; echo " "; echo " "
 
 ## check urls -----------------------------------
 if [[ -n $URLS_TO_CHECK ]]; then
@@ -90,7 +90,7 @@ else
     echo "no urls to curl..."
 fi
     
-echo "---"; echo " "
+echo "---"; echo " "; echo " "
 
 ## that's it! -----------------------------------
 echo "DEPLOY-COMPLETE"; echo " "; echo "--------------------"; echo " "
