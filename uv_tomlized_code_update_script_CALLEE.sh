@@ -37,25 +37,25 @@ git pull
 echo "---"; echo " "; echo " "
 
 ## update any python packages -------------------
-echo "running uv sync..."; echo " "
+echo ":: running uv sync..."; echo " "
 uv sync --locked --group $UV_GROUP
 echo "---"; echo " "; echo " "
 
 ## run collectstatic ----------------------------
 if [[ -n $STATIC_WEB_DIR_PATH ]]; then
-    echo "running collectstatic..."
+    echo ":: running collectstatic..."; echo " "
     uv run ./manage.py collectstatic --noinput
     echo "---"; echo " "; echo " "
 fi
 
 ## reset FINAL group and permissions -----------
-echo "running final ownership and permissions update..."; echo " "
+echo ":: running final ownership and permissions update..."; echo " "
 reset_group_and_permissions
 echo "---"; echo " "; echo " "
 
 ## make it real
 if [[ -n $TOUCH_PATH ]]; then   
-    echo "touching the restart file..."
+    echo ":: touching the restart file..."; echo " "
     touch $TOUCH_PATH
     sleep 1
     echo "---"; echo " "; echo " "
@@ -75,7 +75,7 @@ echo "---"; echo " "; echo " "
 
 ## check urls -----------------------------------
 if [[ -n $URLS_TO_CHECK ]]; then
-    echo "running curl-check..."
+    echo ":: running curl-check..."; echo " "
     for url in "${URLS_TO_CHECK[@]}"
     do
         echo " "; echo "checking url: " $url
