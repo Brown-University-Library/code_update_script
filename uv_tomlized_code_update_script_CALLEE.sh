@@ -110,7 +110,7 @@ echo "---"; echo " "; echo " "
 
 ## check urls -----------------------------------
 if [[ -n $URLS_TO_CHECK ]]; then
-    echo ":: running curl-check..."; echo " "
+    echo ":: running curl-check..."
     for url in "${URLS_TO_CHECK[@]}"
     do
         echo " "; echo "checking url: " $url
