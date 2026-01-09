@@ -99,11 +99,11 @@ echo "---"; echo " "; echo " "
 # ## run tests ------------------------------------
 # echo ":: running tests..."; echo " "
 # cd $PROJECT_DIR_PATH
-# if uv run ./run_tests.py; then
+# if test_output=$(uv run ./run_tests.py 2>&1); then
 #     echo "Tests passed successfully"
 # else
 #     echo "ERROR: Tests failed with exit code $?"
-#     echo "Please check the test output above for details"
+#     echo "$test_output"
 #     echo "Continuing with deployment despite test failure..."
 # fi
 # echo "---"; echo " "; echo " "
