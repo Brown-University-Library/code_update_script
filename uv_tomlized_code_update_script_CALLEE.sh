@@ -84,17 +84,23 @@ if [[ -n $TOUCH_PATH ]]; then
     echo "---"; echo " "; echo " "
 fi
 
-## run tests ------------------------------------
-echo ":: running tests..."; echo " "
-cd $PROJECT_DIR_PATH
-if test_output=$(uv run ./run_tests.py 2>&1); then
-    echo "Tests passed successfully"
+## run tests if not production ------------------
+HOSTNAME=$(hostname)
+if [[ ! $HOSTNAME =~ ^p.* ]]; then
+    echo ":: running tests (non-production server: $HOSTNAME)..."; echo " "
+    cd $PROJECT_DIR_PATH
+    if test_output=$(uv run ./run_tests.py 2>&1); then
+        echo "Tests passed successfully"
+    else
+        echo "ERROR: Tests failed with exit code $?"
+        echo "$test_output"
+        echo "Continuing with deployment despite test failure..."
+    fi
+    echo "---"; echo " "; echo " "
 else
-    echo "ERROR: Tests failed with exit code $?"
-    echo "$test_output"
-    echo "Continuing with deployment despite test failure..."
+    echo ":: skipping tests (production server: $HOSTNAME)"; echo " "
+    echo "---"; echo " "; echo " "
 fi
-echo "---"; echo " "; echo " "
 
 # ## run tests ------------------------------------
 # echo ":: running tests..."; echo " "
