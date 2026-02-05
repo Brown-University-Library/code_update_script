@@ -33,8 +33,6 @@ function reset_group_and_permissions () {
         echo "processing directory: " $dir_path
         sudo /bin/chgrp -R $GROUP $dir_path  
         sudo /bin/chmod -R g=rwX $dir_path
-        ## ensure group inheritance for newly-created files/dirs under this tree
-        find "$dir_path" -type d -exec sudo /bin/chmod g+s {} +
     done
 }
 
