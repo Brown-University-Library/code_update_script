@@ -34,6 +34,8 @@ function reset_group_and_permissions () {
         sudo /bin/chgrp -R $GROUP $dir_path  
         sudo /bin/chmod -R g=rwX $dir_path
     done
+    ## ensure group inheritance for newly-created files/dirs under this tree
+    find "$PROJECT_DIR_PATH" -type d -exec sudo /bin/chmod g+s {} +
 }
 
 ## main code --------------------------------------------------------
