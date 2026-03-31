@@ -86,7 +86,7 @@ URLS_TO_CHECK=(
 
 ## tests
 
-Tests are auto-run on dev-servers, but not on prod-servers, to minimize the chance that a test may write to the production database in an unintended way.
+In the `uv_tomlized_code_update_script_CALLEE.sh` script, tests are auto-run on dev-servers, but not on prod-servers, to minimize the chance that a test may write to the production database in an unintended way.
 
 On a successful test-run, the script output will simply indicate that the tests were successful. On any failures, the full test-output logging will be shown.
 
@@ -98,8 +98,10 @@ The command below:
 find "$dir_path" -type d -exec sudo /bin/chmod g+s {} +
 ```
 
-...was removed from the `uv_tomlized_code_update_script_CALLEE.sh` script -- in the permissions-update-for-loop, because it could generate a "too many arguments" error on some projects with lots of directories. 
+...was removed from the `uv_tomlized_code_update_script_CALLEE.sh` script -- in the permissions-update-for-loop -- because it could generate a "too many arguments" error on some stuff-directories with lots of subdirectories. 
 
-That's ok, because the sticky-bit it set was a one-time operation. Feel free to run it manually from the command-line, on a new stuff-directory, if you see that newly-created files/dirs are not inheriting the expected group, and find that annoying. (But it's not necessary -- the regular code-update scripts will correct the groups.)
+It was moved to the bottom of that function, scoped to the project-directory.
+
+This line is important, because without it -- even after running the code-update script, `__pycache__` files can be created with non-group-writable permissions. If the auto-updater perceives any files in the project-directory that are not group-writable, it won't run. This command addresses that.
 
 ---
