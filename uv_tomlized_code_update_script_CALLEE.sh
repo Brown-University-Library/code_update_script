@@ -100,18 +100,6 @@ else
     echo "---"; echo " "; echo " "
 fi
 
-# ## run tests ------------------------------------
-# echo ":: running tests..."; echo " "
-# cd $PROJECT_DIR_PATH
-# if test_output=$(uv run ./run_tests.py 2>&1); then
-#     echo "Tests passed successfully"
-# else
-#     echo "ERROR: Tests failed with exit code $?"
-#     echo "$test_output"
-#     echo "Continuing with deployment despite test failure..."
-# fi
-# echo "---"; echo " "; echo " "
-
 ## check urls -----------------------------------
 if [[ -n $URLS_TO_CHECK ]]; then
     echo ":: running curl-check..."
