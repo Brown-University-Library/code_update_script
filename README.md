@@ -18,11 +18,14 @@ source /path/to/the_CALLEE.sh
 This is the script to call for the newer projects that **do** have a `pyproject.toml` file. 
 
 Features:
-- updates permissions and groups
+- updates permissions and groups before and after the deploy
 - runs `git pull`
-- auto-updates the active venv
-- runs tests after the update (locally and on dev -- intentionally _not_ on prod)
-- runs django's `collectstatic` command if a `STATIC_WEB_DIR_PATH` envar is detected
+- runs `uv sync --locked --group $UV_GROUP`
+- auto-runs django's `collectstatic` if `STATIC_WEB_DIR_PATH` is set
+- touches the restart file if `TOUCH_PATH` is set
+- ensures newly created files and directories under `PROJECT_DIR_PATH` keep inheriting the expected group
+- runs tests after the update on non-production hosts, and logs failures without aborting the deploy
+- curl-checks configured URLs if `URLS_TO_CHECK` is set
 - optionally runs in `--permissions-only` mode
 
 Usage:
@@ -90,11 +93,21 @@ URLS_TO_CHECK=(
 )
 ```
 
+For `uv_tomlized_code_update_script_CALLEE.sh`, these envars control significant behavior:
+
+- `PROJECT_DIR_PATH`: directory the script `cd`s into before `git pull`, `uv sync`, and test execution
+- `LOG_DIR_PATH` and `STUFF_DIR_PATH`: always included in the permissions/group reset
+- `STATIC_WEB_DIR_PATH`: if set, included in the permissions/group reset and triggers `uv run ./manage.py collectstatic --noinput`
+- `GROUP`: group applied by `chgrp -R`
+- `UV_GROUP`: dependency group passed to `uv sync --locked --group`
+- `TOUCH_PATH`: if set, the script touches this file near the end of the deploy
+- `URLS_TO_CHECK`: if set, the script runs a `curl --head` check against each configured URL
+
 ## tests
 
-In the `uv_tomlized_code_update_script_CALLEE.sh` script, tests are auto-run on dev-servers, but not on prod-servers, to minimize the chance that a test may write to the production database in an unintended way.
+In the `uv_tomlized_code_update_script_CALLEE.sh` script, tests are auto-run on non-production servers, but skipped on production hosts whose hostname begins with `p`, to minimize the chance that a test may write to the production database in an unintended way.
 
-On a successful test-run, the script output will simply indicate that the tests were successful. On any failures, the full test-output logging will be shown.
+On a successful test-run, the script output will simply indicate that the tests were successful. On any failures, the full test-output logging will be shown, but the deploy will continue.
 
 ## permissions
 
