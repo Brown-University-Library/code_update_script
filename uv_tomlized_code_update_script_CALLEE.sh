@@ -6,7 +6,7 @@
 ## Usage with flag: `bash ./CALLER.sh --permissions-only` to only reset permissions
 
 function show_help () {
-    HELP_DESC="$0 resets group/perms on key paths, pulls the repo, syncs uv dependencies, optionally runs collectstatic, then touches the restart file"
+    HELP_DESC="$0 resets group/perms, pulls the repo, syncs uv dependencies, auto-runs collectstatic if necessary, re-applies final perms, touches the restart file if necessary, runs tests on non-prod, and curl-checks any configured URLs"
     echo "$HELP_DESC"
     echo "Usage: $0 [flags]"
     printf '%-32s %s\n' \
