@@ -5,6 +5,15 @@
 ## Usage: `bash ./CALLER.sh`, which sets vars and then runs `source /path/to/CALLEE.sh`
 ## Usage with flag: `bash ./CALLER.sh --permissions_only` to only reset permissions
 
+function show_help () {
+    HELP_DESC="$0 resets group/perms on key paths, pulls the repo, syncs uv dependencies, optionally runs collectstatic, then touches the restart file"
+    echo "$HELP_DESC"
+    echo "Usage: $0 [flags]"
+    printf '%-32s %s\n' \
+      '-(-)permissions_only' 'stop script after updating permissions and groups' \
+      '-h/--help' 'show this help and exit'
+}
+
 ## parse possible arguments -----------------------------------------
 PERMISSIONS_ONLY=false
 while [[ $# -gt 0 ]]; do
@@ -12,6 +21,15 @@ while [[ $# -gt 0 ]]; do
     -permissions_only|--permissions_only)
       PERMISSIONS_ONLY=true
       shift
+      ;;
+    -h|--help)
+      show_help
+      return 0
+      ;;
+    -*|--*)
+      echo "unknown option $1"; echo " "
+      show_help
+      return 1
       ;;
     *)
       shift

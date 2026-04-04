@@ -36,6 +36,12 @@ or
 $ bash ./specific_project_caller.sh --permissions_only
 ```
 
+or
+
+```
+$ bash ./specific_project_caller.sh --help
+```
+
 ---
 
 
