@@ -23,7 +23,7 @@ Features:
 - auto-updates the active venv
 - runs tests after the update (locally and on dev -- intentionally _not_ on prod)
 - runs django's `collectstatic` command if a `STATIC_WEB_DIR_PATH` envar is detected
-- optionally runs in `--permissions_only` mode
+- optionally runs in `--permissions-only` mode
 
 Usage:
 ```
@@ -33,7 +33,7 @@ $ bash ./specific_project_caller.sh
 or
 
 ```
-$ bash ./specific_project_caller.sh --permissions_only
+$ bash ./specific_project_caller.sh --permissions-only
 ```
 
 or

@@ -3,14 +3,14 @@
 ## assumes `uv` is installed and available in PATH
 
 ## Usage: `bash ./CALLER.sh`, which sets vars and then runs `source /path/to/CALLEE.sh`
-## Usage with flag: `bash ./CALLER.sh --permissions_only` to only reset permissions
+## Usage with flag: `bash ./CALLER.sh --permissions-only` to only reset permissions
 
 function show_help () {
     HELP_DESC="$0 resets group/perms on key paths, pulls the repo, syncs uv dependencies, optionally runs collectstatic, then touches the restart file"
     echo "$HELP_DESC"
     echo "Usage: $0 [flags]"
     printf '%-32s %s\n' \
-      '-(-)permissions_only' 'stop script after updating permissions and groups' \
+      '--permissions-only' 'stop script after updating permissions and groups' \
       '-h/--help' 'show this help and exit'
 }
 
@@ -18,7 +18,7 @@ function show_help () {
 PERMISSIONS_ONLY=false
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -permissions_only|--permissions_only)
+    --permissions-only)
       PERMISSIONS_ONLY=true
       shift
       ;;
@@ -65,7 +65,7 @@ echo "---"; echo " "; echo " "
 
 ## exit early if only permissions update was requested
 if [[ $PERMISSIONS_ONLY = true ]]; then
-    echo ":: Exiting early because --permissions_only was set"; echo " "
+    echo ":: Exiting early because --permissions-only was set"; echo " "
     echo "PERMISSIONS-ONLY-UPDATE COMPLETE"; echo " "; echo "--------------------"; echo " "
     return 0  # use 'return' instead of 'exit' since this script is sourced
 fi
