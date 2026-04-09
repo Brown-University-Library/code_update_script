@@ -55,7 +55,7 @@ function reset_group_and_permissions () {
     ## ensure group inheritance for newly-created files/dirs under this tree
     find "$PROJECT_DIR_PATH" -type d -exec sudo /bin/chmod g+s {} +
     ## ensure read-write permissions for the specified group for newly-created files/dirs under this tree
-    # find "$PROJECT_DIR_PATH" -type d -exec sudo setfacl -m d:g:"$GROUP":rwX,d:m::rwX {} +
+    find "$PROJECT_DIR_PATH" -type d -exec sudo setfacl -m d:g:"$GROUP":rwX,d:m::rwX {} +
 }
 
 ## main code --------------------------------------------------------
