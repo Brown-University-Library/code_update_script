@@ -40,23 +40,54 @@ done
 ## helper code ------------------------------------------------------
 
 ## function for calls below
-function reset_group_and_permissions () { 
-    if [[ -n $STATIC_WEB_DIR_PATH ]]; then
-        path_array=( "$LOG_DIR_PATH" "$STUFF_DIR_PATH" "$STATIC_WEB_DIR_PATH" )
+function reset_group_and_permissions() {
+
+    ## build path_array
+    ## - only PROJECT_DIR_PATH is guranteed to exit
+    ## - STUFF_DIR_PATH encompasses PROJECT_DIR_PATH
+    local path_array=()
+
+    [[ -n ${LOG_DIR_PATH:-} ]] && path_array+=( "$LOG_DIR_PATH" )
+
+    if [[ -n ${STUFF_DIR_PATH:-} ]]; then
+        path_array+=( "$STUFF_DIR_PATH" )
     else
-        path_array=( "$LOG_DIR_PATH" "$STUFF_DIR_PATH" )
+        path_array+=( "$PROJECT_DIR_PATH" )
     fi
-    for dir_path in "${path_array[@]}"
-    do
+
+    [[ -n ${STATIC_WEB_DIR_PATH:-} ]] && path_array+=( "$STATIC_WEB_DIR_PATH" )
+
+    ## loop through path_array and reset group and permissions
+    for dir_path in "${path_array[@]}"; do
         echo "processing directory: $dir_path"
         sudo /bin/chgrp -R "$GROUP" "$dir_path"
         sudo /bin/chmod -R g=rwX "$dir_path"
     done
+
     ## ensure group inheritance for newly-created files/dirs under this tree
     find "$PROJECT_DIR_PATH" -type d -exec sudo /bin/chmod g+s {} +
+    
     ## ensure read-write permissions for the specified group for newly-created files/dirs under this tree
     # find "$PROJECT_DIR_PATH" -type d -exec sudo setfacl -m d:g:"$GROUP":rwX,d:m::rwX {} +
 }
+
+# function reset_group_and_permissions () { 
+#     if [[ -n $STATIC_WEB_DIR_PATH ]]; then
+#         path_array=( "$LOG_DIR_PATH" "$STUFF_DIR_PATH" "$STATIC_WEB_DIR_PATH" )
+#     else
+#         path_array=( "$LOG_DIR_PATH" "$STUFF_DIR_PATH" )
+#     fi
+#     for dir_path in "${path_array[@]}"
+#     do
+#         echo "processing directory: $dir_path"
+#         sudo /bin/chgrp -R "$GROUP" "$dir_path"
+#         sudo /bin/chmod -R g=rwX "$dir_path"
+#     done
+#     ## ensure group inheritance for newly-created files/dirs under this tree
+#     find "$PROJECT_DIR_PATH" -type d -exec sudo /bin/chmod g+s {} +
+#     ## ensure read-write permissions for the specified group for newly-created files/dirs under this tree
+#     # find "$PROJECT_DIR_PATH" -type d -exec sudo setfacl -m d:g:"$GROUP":rwX,d:m::rwX {} +
+# }
 
 ## main code --------------------------------------------------------
 
